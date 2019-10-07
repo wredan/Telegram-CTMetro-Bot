@@ -18,30 +18,6 @@ def checkDayTime():
         module = metroTime["AFTERNOON"]
     return module
 
-def offset(end, stazione, prevH, prevM):
-    fine = "to"+end.upper()
-    prevM+=metroTime[stazione.upper()][fine]
-    module = checkDayTime()
-    if prevM//module == 0:
-        prevM = "0"+str(prevM%60)
-    tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM)
-    return tx
-
-def getMetroTime(stazione, start, end):
-    t = datetime.now()
-    if start == "NESIMA":
-        t1 = timedelta(hours = 6, minutes= 40)
-    else:
-        t1 = timedelta(hours = 7, minutes= 0)
-    module = checkDayTime()
-    t3 = t - t1
-    m = (t.hour * 60) + t.minute
-    minutes = (t3.hour * 60) + t3.minute
-    prevTime = m + (module - (minutes % module))
-    prevH = prevTime // 60
-    prevMin = prevTime % 60
-    return offset(end, stazione, prevH, prevMin)
-
 def checkStation(message, bot, chat_id):
     if len(message) > 7:
         for el in metroTime["STAZIONI"]:
@@ -69,3 +45,27 @@ def checkTime(bot, chat_id):
         tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0"
         bot.send_message(chat_id=chat_id, text= tx)
         return False
+
+def getMetroTime(stazione, start, end):
+    t = datetime.now()
+    if start == "NESIMA":
+        t1 = timedelta(hours = 6, minutes= 40)
+    else:
+        t1 = timedelta(hours = 7, minutes= 0)
+    module = checkDayTime()
+    t3 = t - t1
+    m = (t.hour * 60) + t.minute
+    minutes = (t3.hour * 60) + t3.minute
+    prevTime = m + (module - (minutes % module))
+    prevH = prevTime // 60
+    prevMin = prevTime % 60
+    return offset(end, stazione, prevH, prevMin)
+    
+def offset(end, stazione, prevH, prevM):
+    fine = "to"+end.upper()
+    prevM+=metroTime[stazione.upper()][fine]
+    module = checkDayTime()
+    if prevM//module == 0:
+        prevM = "0"+str(prevM%60)
+    tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM)
+    return tx
