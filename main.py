@@ -8,6 +8,7 @@ def main():
     updater = Updater(token=config_get["token"])
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('metro',getMetro))
+    dp.add_handler(CommandHandler('info',getInfo))
     updater.start_polling()
     updater.idle()
 
