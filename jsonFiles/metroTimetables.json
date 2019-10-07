@@ -1,4 +1,6 @@
 {
+    "startService": 7,
+    "endService": 21,
     "startNesima": {
         "hour": 6,
         "minutes": 40
@@ -43,14 +45,16 @@
         "toSTESICORO": 12,
         "toNESIMA": 4
     },
-    "nesGIOVANNI XXIII": {
+    "GIOVANNI XXIII": {
         "toSTESICORO": 14,
         "toNESIMA": 2
     },
-    "nesSTESICORO": {
+    "STESICORO": {
         "toSTESICORO": 17,
         "toNESIMA": 0
     },
     "MORNING": 10,
-    "AFTERNOON": 15 
+    "AFTERNOON": 15,
+    "splitH": 15,
+    "STAZIONI": ["NESIMA", "SAN NULLO", "MILO", "BORGO", "GIUFFRIDA", "ITALIA", "GALATEA", "GIOVANNI XXIII", "STESICORO"]
 }
