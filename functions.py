@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+#bisogna inserire i valori del JSON metroTimetables, sto cercando di capire come navigarlo per estrarre i valori
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 from datetime import timedelta
 from datetime import datetime
@@ -9,11 +10,8 @@ with open('metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
 
 def offset(end, stazione, prevH, prevM):
-    if end == "STESICORO":
-        staz = "nes" + stazione.upper()
-    else:
-        staz = "ste" + stazione.upper()
-    prevM+=metroTime[staz]
+    fine = "to"+end.upper()
+    prevM+=metroTime[staz].
     tx = "La prossima metro da "+str(stazione.upper())+" in direzione "+ str(end.upper()) +" è alle: " + str(prevH) + ":" + str(prevM)
     return tx
 
