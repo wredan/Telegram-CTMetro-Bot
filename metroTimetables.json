@@ -1,0 +1,37 @@
+{
+    "startNesima": {
+        "hour": 6,
+        "minutes": 40
+    },
+    "endNesima": {
+        "hour": 20,
+        "minutes": 45
+    },
+    "startStesicoro": {
+        "hour": 7,
+        "minutes": 0
+    },
+    "endStesicoro": {
+        "hour": 21,
+        "minutes": 10
+    },
+    "nesNESIMA": 0,
+    "nesSAN NULLO": 2,
+    "nesMILO": 5,
+    "nesBORGO": 7,
+    "nesGIUFFRIDA": 8,
+    "nesITALIA": 10,
+    "nesGALATEA": 12,
+    "nesGIOVANNI XXIII": 14,
+    "nesSTESICORO": 17,
+
+    "steNESIMA": 16,
+    "steSAN NULLO": 14,
+    "steMILO": 11,
+    "steBORGO": 9,
+    "steGIUFFRIDA": 7,
+    "steITALIA": 6,
+    "steGALATEA": 4,
+    "steGIOVANNI XXIII": 2,
+    "steSTESICORO": 0
+}
