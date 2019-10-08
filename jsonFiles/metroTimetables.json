@@ -1,5 +1,6 @@
 {
-    "startService": 7,
+    "startServiceHour": 6,
+    "startServiceMinute": 40,
     "endService": 21,
     "startNesima": {
         "hour": 6,
