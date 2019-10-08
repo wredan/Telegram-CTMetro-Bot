@@ -18,19 +18,6 @@ def checkDayTime():
         module = metroTime["AFTERNOON"]
     return module
 
-def checkStation(message, bot, chat_id):
-    if len(message) > 7:
-        for el in metroTime["STAZIONI"]:
-            if message[7:].upper() == el:
-                return True
-        mex = phrases["noStations"]
-        bot.send_message(chat_id=chat_id, text= mex)
-        return False
-    else:
-        mex = phrases["errStations"]
-        bot.send_message(chat_id=chat_id, text= mex)
-    return False
-
 def checkStart(start):
     if start == "NESIMA":
         t = timedelta(hours = metroTime["startNesima"]["hour"], minutes= metroTime["startNesima"]["minutes"])
@@ -38,7 +25,7 @@ def checkStart(start):
         t = timedelta(hours = metroTime["startStesicoro"]["hour"], minutes= metroTime["startStesicoro"]["minutes"])
     return t
 
-def checkTime(bot, chat_id):
+def checkTime(bot, query):
     #todo: controlla cosa ti ritorna datetime.now()
     t = datetime.now()
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
@@ -53,7 +40,7 @@ def checkTime(bot, chat_id):
         tx = "Servizio sospeso\n"
         tx+= "Il primo treno disponibile da NESIMA: " + str(startNesimaH) +":"+ str(startNesimaM) +"\n"
         tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0"
-        bot.send_message(chat_id=chat_id, text= tx)
+        query.edit_message_text(text= tx)
         return False
 
 def getMetroTime(stazione, start, end):

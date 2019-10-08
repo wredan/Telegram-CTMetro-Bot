@@ -8,11 +8,12 @@ def main():
     updater = Updater(token=config_get["token"])
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start',startBot))
-    dp.add_handler(CommandHandler('metro',getMetro))
+    dp.add_handler(CommandHandler('metro',getStationsChoice))
     dp.add_handler(CommandHandler('info',getInfo))
     dp.add_handler(CommandHandler('autori',getAuthor))
     dp.add_handler(CommandHandler('stazioni',getStazioni))
     dp.add_handler(CommandHandler('chatid',getChatId))
+    dp.add_handler(CallbackQueryHandler(callback))
     updater.start_polling()
     updater.idle()
 
