@@ -31,12 +31,19 @@ def checkStation(message, bot, chat_id):
         bot.send_message(chat_id=chat_id, text= mex)
     return False
 
+def checkStart(start):
+    if start == "NESIMA":
+        t = timedelta(hours = metroTime["startNesima"]["hour"], minutes= metroTime["startNesima"]["minutes"])
+    else:
+        t = timedelta(hours = metroTime["startStesicoro"]["hour"], minutes= metroTime["startStesicoro"]["minutes"])
+    return t
+
 def checkTime(bot, chat_id):
-    #TODO: controlla cosa ti ritorna datetime.now()
+    #todo: controlla cosa ti ritorna datetime.now()
     t = datetime.now()
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
-    else if t.hour == metroTime["startServiceHour"] and t.minute>=["startServiceMinute"]:
+    elif t.hour == metroTime["startServiceHour"] and t.minute>=["startServiceMinute"]:
         return True
     else:
         startNesimaH = metroTime["startNesima"]["hour"]
@@ -51,10 +58,7 @@ def checkTime(bot, chat_id):
 
 def getMetroTime(stazione, start, end):
     t = datetime.now()
-    if start == "NESIMA":
-        t1 = timedelta(hours = 6, minutes= 40)
-    else:
-        t1 = timedelta(hours = 7, minutes= 0)
+    t1 = checkStart(start)
     module = checkDayTime()
     t3 = t - t1
     m = (t.hour * 60) + t.minute
