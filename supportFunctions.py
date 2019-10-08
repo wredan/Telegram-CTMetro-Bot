@@ -32,8 +32,11 @@ def checkStation(message, bot, chat_id):
     return False
 
 def checkTime(bot, chat_id):
+    #TODO: controlla cosa ti ritorna datetime.now()
     t = datetime.now()
-    if t.hour >= metroTime["startService"] and t.hour <= metroTime["endService"] - 1:
+    if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
+        return True
+    else if t.hour == metroTime["startServiceHour"] and t.minute>=["startServiceMinute"]:
         return True
     else:
         startNesimaH = metroTime["startNesima"]["hour"]
