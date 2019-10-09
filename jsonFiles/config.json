@@ -1,6 +1,7 @@
 {
-    "token": "",
+    "token": "yourToken",
     "autorizzati": [
         ""
-    ]
+    ],
+    "commandsList":"Lista completa di tutti i comandi:\n\nComandi User\n /metro - restituisce l'orario della prossima metro per la stazione indicata\n /stazioni - lista delle stazioni disponibili\n /info - fornisce informazioni riguardanti il bot\n /autori - lista degli autori del bot\n /report <testo> - segnala malfunzionamenti agli sviluppatori.\n /help - fornisce aiuto agli utenti\n /donate - regala un caffè agli sviluppatori\n\n Comandi Admin:\n /chatid - restituisce il chat_id\n /readreports - legge i report inviati dal file\n /clearreports - cancella tutti i report\n /listacomandi - restituisce questo messaggio"
 }
