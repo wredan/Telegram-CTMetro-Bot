@@ -11,6 +11,9 @@ with open('./jsonFiles/metroTimetables.json', 'r') as f:
 with open('./jsonFiles/phrases.json', 'r') as f:
     phrases = json.load(f)
 
+with open('./jsonFiles/config.json', 'r') as f:
+    config_get = json.load(f)
+
 def getStationsChoice(bot, update):
     # if len(update.message.text)>6:
     #     getMetro()  
@@ -51,11 +54,16 @@ def getInfo(bot, update):
 def getChatId(bot, update):
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= chat_id)
+
     
 def getAuthor(bot, update):
     aut = phrases["author"]
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= aut)
+
+def getHelp(bot, update):
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id= chat_id, text= phrases["help"])
 
 def startBot(bot, update):
     st = phrases["start"]
@@ -68,3 +76,18 @@ def getStazioni(bot, update):
         mex+=el+"\n"
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= mex)
+
+def report(bot, update):
+    chat_id = update.message.chat_id
+    text = update.message.text
+    tx = "Da: " + update.message.from_user.username + "\nMessaggio: " + text[7:]
+    if len(text) > 10:
+        for el in config_get["autorizzati"]:
+            bot.send_message(chat_id= el, text= tx)
+        bot.send_message(chat_id= chat_id, text= phrases["succReport"])
+    else:
+        
+        bot.send_message(chat_id= chat_id, text= phrases["errReport"])
+def donate(bot, update):
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id= chat_id, text= phrases["donate"])
