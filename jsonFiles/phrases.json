@@ -4,6 +4,7 @@
     "help": "Ecco una lista dei comandi:\n\n 🚇 /metro - restituisce l'orario della prossima metro per la stazione indicata\n 🚉 /stazioni - lista delle stazioni disponibili\n ℹ️ /info - fornisce informazioni riguardanti il bot\n 👨‍💻 /autori - lista degli autori del bot\n 📢 /report <testo> - segnala malfunzionamenti agli sviluppatori. Potresti essere contattato su telegram da uno di loro per ulteriori chiarimenti. Se utilizzi il comando ci autorizzi implicitamente a contattarti. Per favore evitare di abusarne, grazie.\n\n 💙 /donate - regala un caffè agli sviluppatori se il bot ti è stato di aiuto! 😄",
     "errReport": "Uso improprio del comando /report, usalo secondo la forma: /report <testo>.",
     "succReport": "Report inviato correttamente! Grazie della segnalazione, provvederemo a risolvere al più presto 👍🏻",
-    "author": "Danilo Santitto\nOrazio Sciuto",
-    "donate": "Ancora non è possibile donare, ma tra poco lo sarà! Grazie comunque per averci provato 😄"
+    "author": "Danilo Santitto",
+    "donate": "Ancora non è possibile donare, ma tra poco lo sarà! Grazie comunque l'intenzione! 😄",
+    "readReports": ", questo è un comando non listato a cui solo gli admin possono accedere, per favore non usarlo!\n\"Io non so chi sei, non so che cosa vuoi ma la storia finisce qui. Non verrò a cercarti 👀, non ti darò la caccia. Ma se non la smetterai, io ti cercherò 👀. Ti troverò 👀. E ti... darò un forte abbraccio!\" cit.\n\n Scherzi a parte, per favore non usare più il comando, va bene? Grazie mille!"
 }
