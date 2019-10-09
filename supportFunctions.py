@@ -43,17 +43,34 @@ def checkTime(bot, query):
         query.edit_message_text(text= tx)
         return False
 
-def getMetroTime(stazione, start, end):
-    t = datetime.now()
+
+def getMetroTime(stazione, start, end, time):
+    t = time
+    print(t.strftime("%H:%M:%S"))
     t1 = checkStart(start)
+    # print(t1.strftime("%H:%M:%S"))
     module = checkDayTime()
+    # print(module.strftime("%H:%M:%S"))
     t3 = t - t1
+    print(t3.strftime("%H:%M:%S"))
     m = (t.hour * 60) + t.minute
     minutes = (t3.hour * 60) + t3.minute
     prevTime = m + (module - (minutes % module))
     prevH = prevTime // 60
     prevMin = prevTime % 60
     return offset(end, stazione, prevH, prevMin)
+
+# def getMetroTime(stazione, start, end):
+#     t = datetime.now()
+#     t1 = checkStart(start)
+#     module = checkDayTime()
+#     t3 = t - t1
+#     m = (t.hour * 60) + t.minute
+#     minutes = (t3.hour * 60) + t3.minute
+#     prevTime = m + (module - (minutes % module))
+#     prevH = prevTime // 60
+#     prevMin = prevTime % 60
+#     return offset(end, stazione, prevH, prevMin)
     
 def offset(end, stazione, prevH, prevM):
     fine = "to"+end.upper()
@@ -63,5 +80,5 @@ def offset(end, stazione, prevH, prevM):
         prevM = "0"+str(prevM%60)
     tx=""
     if(stazione.upper() != end.upper()):
-        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM)
+        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM) + " sono le " + datetime.now().strftime("%H:%M:%S")
     return tx
