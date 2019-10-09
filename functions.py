@@ -40,35 +40,56 @@ def getStationsChoice(bot, update):
 
 def callback(bot, update):
     query = update.callback_query
-    if checkTime(bot, query):
+    if str(query.data) == "clearReportFile":
+        f = open("reports.txt", "w")
+        f.write('')
+        f.close()
+        query.edit_message_text(text= "File ripulito correttamente")
+    elif str(query.data) == "none":
+        query.edit_message_text(text= "Operazione annullata")
+    elif checkTime(bot, query):
         timeNes = getMetroTime(query.data, "NESIMA", "STESICORO", datetime.now())
         timeSte = getMetroTime(query.data, "STESICORO", "NESIMA", datetime.now())
         time = timeNes+"\n"+timeSte
         query.edit_message_text(text= time)
 
-def getInfo(bot, update):
-    info = phrases["info"]
+def clearReports(bot, update):
     chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text= info) 
+    if str(chat_id) in config_get["autorizzati"]:
+        keyboard = [[InlineKeyboardButton("Si", callback_data='clearReportFile'), InlineKeyboardButton("No", callback_data='none')]]
+        update.message.reply_text('Sicuro di voler eliminare tutti i report?', reply_markup=InlineKeyboardMarkup(keyboard))
+    else:
+        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
+        bot.send_message(chat_id= chat_id, text= tx)
 
-def getChatId(bot, update):
+def donate(bot, update):
     chat_id = update.message.chat_id
-    bot.send_message(chat_id= chat_id, text= chat_id)
+    bot.send_message(chat_id= chat_id, text= phrases["donate"])
 
-    
 def getAuthor(bot, update):
     aut = phrases["author"]
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= aut)
 
+def getChatId(bot, update):
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id= chat_id, text= chat_id)
+
+def getCommandsList(bot, update):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        bot.send_message(chat_id= chat_id, text= config_get["commandsList"])
+    else:
+        getHelp(bot, update)
+
 def getHelp(bot, update):
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= phrases["help"])
 
-def startBot(bot, update):
-    st = phrases["start"]
+def getInfo(bot, update):
+    info = phrases["info"]
     chat_id = update.message.chat_id
-    bot.send_message(chat_id= chat_id, text= st)
+    bot.send_message(chat_id=chat_id, text= info) 
 
 def getStazioni(bot, update):
     mex = ""
@@ -77,17 +98,34 @@ def getStazioni(bot, update):
     chat_id = update.message.chat_id
     bot.send_message(chat_id= chat_id, text= mex)
 
+def readReports(bot, update):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        f = open("reports.txt", "r")
+        tx = f.read()
+        f.close()
+        if len(tx) < 1:
+            tx = "Non ci sono report! Seems we have done a good job 😏"
+        bot.send_message(chat_id= chat_id, text= tx)
+    else:
+        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
+        bot.send_message(chat_id= chat_id, text= tx)
+    
 def report(bot, update):
     chat_id = update.message.chat_id
     text = update.message.text
-    tx = "Da: " + update.message.from_user.username + "\nMessaggio: " + text[7:]
+    tx = "Da: @" + update.message.from_user.username + "\nMessaggio: " + text[8:] + "\n#report #bugs #bugs #errori\n"
     if len(text) > 10:
+        f = open("reports.txt", "a")
+        f.write(tx)
+        f.close()
+        bot.send_message(chat_id= chat_id, text= phrases["succReport"])
         for el in config_get["autorizzati"]:
             bot.send_message(chat_id= el, text= tx)
-        bot.send_message(chat_id= chat_id, text= phrases["succReport"])
     else:
-        
         bot.send_message(chat_id= chat_id, text= phrases["errReport"])
-def donate(bot, update):
+
+def startBot(bot, update):
+    st = phrases["start"]
     chat_id = update.message.chat_id
-    bot.send_message(chat_id= chat_id, text= phrases["donate"])
+    bot.send_message(chat_id= chat_id, text= st)
