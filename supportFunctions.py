@@ -61,5 +61,7 @@ def offset(end, stazione, prevH, prevM):
     module = checkDayTime()
     if prevM//module == 0:
         prevM = "0"+str(prevM%60)
-    tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM)
+    tx=""
+    if(stazione.upper() != end.upper()):
+        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM)
     return tx
