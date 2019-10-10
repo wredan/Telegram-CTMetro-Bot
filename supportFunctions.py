@@ -7,7 +7,7 @@ import json
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
 
-with open('./jsonFiles/phrases.json', 'r') as f:
+with open('./jsonFiles/phrases.json', 'r' ,errors='ignore') as f:
     phrases = json.load(f)
 
 def checkDayTime():
