@@ -1,5 +1,8 @@
 from functions import *
 import json
+import os
+import sys
+from threading import Thread
 
 with open('./jsonFiles/config.json', 'r') as f:
     config_get = json.load(f)
@@ -20,7 +23,21 @@ def main():
     dp.add_handler(CommandHandler('clearReports',clearReports))
     dp.add_handler(CommandHandler('writeReports',writeOnReportsFile))
     dp.add_handler(CommandHandler('listaComandi',getCommandsList))
+    
     dp.add_handler(CallbackQueryHandler(callback))
+
+    def stop_and_restart():
+        updater.stop()
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+    def restart(bot, update):
+        chat_id = update.message.chat_id
+        if str(chat_id) in config_get["autorizzati"]:
+            print("dentro")
+            bot.send_message(chat_id= chat_id, text= 'Riavviando il bot...')
+            Thread(target=stop_and_restart).start()
+
+    dp.add_handler(CommandHandler('restartbot',restart))
     updater.start_polling()
     updater.idle()
 
