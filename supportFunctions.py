@@ -7,7 +7,7 @@ import json
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
 
-with open('./jsonFiles/phrases.json', 'r' ,errors='ignore') as f:
+with open('./jsonFiles/phrases.json', 'r' , errors='ignore') as f:
     phrases = json.load(f)
 
 def checkDayTime():
@@ -18,15 +18,20 @@ def checkDayTime():
         module = metroTime["AFTERNOON"]
     return module
 
-def checkStart(start):
+def checkStart(start, module):
     if start == "NESIMA":
-        t = timedelta(hours = metroTime["startNesima"]["hour"], minutes= metroTime["startNesima"]["minutes"])
+        if module != 15:
+            t = timedelta(hours = metroTime["startNesimaMattina"]["hour"], minutes= metroTime["startNesimaMattina"]["minutes"])
+        else:
+            t = timedelta(hours = metroTime["startNesimaPomeriggio"]["hour"], minutes= metroTime["startNesimaPomeriggio"]["minutes"])
     else:
-        t = timedelta(hours = metroTime["startStesicoro"]["hour"], minutes= metroTime["startStesicoro"]["minutes"])
+        if module != 15:
+            t = timedelta(hours = metroTime["startStesicoroMattina"]["hour"], minutes= metroTime["startStesicoroMattina"]["minutes"])
+        else:
+            t = timedelta(hours = metroTime["startStesicoroPomeriggio"]["hour"], minutes= metroTime["startStesicoroPomeriggio"]["minutes"])   
     return t
 
 def checkTime(bot, query):
-    #todo: controlla cosa ti ritorna datetime.now()
     t = datetime.now()
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
@@ -43,18 +48,25 @@ def checkTime(bot, query):
         query.edit_message_text(text= tx)
         return False
 
-
 def getMetroTime(stazione, start, end, time):
-    t = time
-    print(t.strftime("%H:%M:%S"))
-    t1 = checkStart(start)
-    # print(t1.strftime("%H:%M:%S"))
+    t = timedelta(hours= time.hour, minutes= time.minute)
     module = checkDayTime()
+    t1 = checkStart(start, module)
     delta = timedelta(minutes= module)
-    # print(module.strftime("%H:%M:%S"))
-    while t1 < t:
-        t1+= delta
-    return offsetTest(end, stazione, t1)
+    toff = offsetTest(end, stazione, t1)
+    while toff < t:
+        toff+= delta
+    tx=""
+    if(stazione.upper() != end.upper()):
+        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
+    return tx
+
+def offsetTest(end, stazione, t1):
+    fine = "to"+end.upper()
+    t1+=timedelta(minutes= metroTime[stazione.upper()][fine])
+    return t1
+
+#tutto quello sotto potenzialmente non serve ad un cazzo (:
     #t3 = t - t1
     #print(t3.strftime("%H:%M:%S"))
     #m = (t.hour * 60) + t.minute
@@ -76,22 +88,13 @@ def getMetroTime(stazione, start, end, time):
 #     prevMin = prevTime % 60
 #     return offset(end, stazione, prevH, prevMin)
     
-def offset(end, stazione, prevH, prevM):
-    fine = "to"+end.upper()
-    prevM+=metroTime[stazione.upper()][fine]
-    module = checkDayTime()
-    if prevM//module == 0:
-        prevM = "0"+str(prevM%60)
-    tx=""
-    if(stazione.upper() != end.upper()):
-        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM) + " sono le " + datetime.now().strftime("%H:%M:%S")
-    return tx
-
-def offsetTest(end, stazione, t1):
-    fine = "to"+end.upper()
-    offset = timedelta(minutes= metroTime[stazione.upper()][fine])
-    t1+=offset
-    tx=""
-    if(stazione.upper() != end.upper()):
-        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + t1.strftime("%H:%M") + " sono le " + datetime.now().strftime("%H:%M:%S")
-    return tx
+#def offset(end, stazione, prevH, prevM):
+#    fine = "to"+end.upper()
+#    prevM+=metroTime[stazione.upper()][fine]
+#    module = checkDayTime()
+#    if prevM//module == 0:
+#        prevM = "0"+str(prevM%60)
+#    tx=""
+#    if(stazione.upper() != end.upper()):
+#        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM) + " sono le " + datetime.now().strftime("%H:%M:%S")
+#    return tx

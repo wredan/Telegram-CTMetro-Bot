@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from supportFunctions import *
 import json
+import time
 
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
@@ -14,6 +15,7 @@ with open('./jsonFiles/phrases.json', 'r', errors='ignore') as f:
 with open('./jsonFiles/config.json', 'r') as f:
     config_get = json.load(f)
 
+sleepTime = 0.200
 def getStationsChoice(bot, update):
     # if len(update.message.text)>6:
     #     getMetro()  
@@ -28,15 +30,6 @@ def getStationsChoice(bot, update):
                 InlineKeyboardButton("STESICORO", callback_data='STESICORO')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO):', reply_markup=reply_markup)
-
-# def getMetro(bot, update):
-#     mex = update.message.text
-#     chat_id = update.message.chat_id
-#     if checkTime(bot, chat_id):
-#         timeNes = getMetroTime(mex[7:], "NESIMA", "STESICORO")
-#         timeSte = getMetroTime(mex[7:], "STESICORO", "NESIMA")
-#         time = timeNes+"\n"+timeSte
-#         bot.send_message(chat_id=chat_id, text= time)    
 
 def callback(bot, update):
     query = update.callback_query
@@ -59,16 +52,21 @@ def clearReports(bot, update):
         keyboard = [[InlineKeyboardButton("Si", callback_data='clearReportFile'), InlineKeyboardButton("No", callback_data='none')]]
         update.message.reply_text('Sicuro di voler eliminare tutti i report?', reply_markup=InlineKeyboardMarkup(keyboard))
     else:
+        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        time.sleep(sleepTime)
         tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
 
 def donate(bot, update):
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     bot.send_message(chat_id= chat_id, text= phrases["donate"])
 
 def getAuthor(bot, update):
     aut = phrases["author"]
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     bot.send_message(chat_id= chat_id, text= aut)
 
 def getChatId(bot, update):
@@ -80,15 +78,21 @@ def getCommandsList(bot, update):
     if str(chat_id) in config_get["autorizzati"]:
         bot.send_message(chat_id= chat_id, text= config_get["commandsList"])
     else:
+        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        time.sleep(sleepTime)
         getHelp(bot, update)
 
 def getHelp(bot, update):
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     bot.send_message(chat_id= chat_id, text= phrases["help"])
 
 def getInfo(bot, update):
     info = phrases["info"]
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     bot.send_message(chat_id=chat_id, text= info) 
 
 def getStazioni(bot, update):
@@ -96,6 +100,8 @@ def getStazioni(bot, update):
     for el in metroTime["STAZIONI"]:
         mex+=el+"\n"
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     bot.send_message(chat_id= chat_id, text= mex)
 
 def readReports(bot, update):
@@ -108,6 +114,8 @@ def readReports(bot, update):
             tx = "Non ci sono report! Seems we have done a good job 😏"
         bot.send_message(chat_id= chat_id, text= tx)
     else:
+        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        time.sleep(sleepTime)
         tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
 
@@ -115,20 +123,26 @@ def writeOnReportsFile(bot, update):
     chat_id = update.message.chat_id
     if str(chat_id) in config_get["autorizzati"]:
         tx = update.message.text
-        f = open("reports.txt", "w")
-        f.write(tx)
-        f.close()
-        bot.send_message(chat_id= chat_id, text= "file scritto correttamente") 
+        if len(tx) > 14:
+            f = open("reports.txt", "w")
+            f.write(tx[14:])
+            f.close()
+            bot.send_message(chat_id= chat_id, text= "file scritto correttamente")
+        else:
+            bot.send_message(chat_id= chat_id, text= "testo non valido o troppo corto")
     else:
+        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
         tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
 
     
 def report(bot, update):
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     text = update.message.text
-    tx = "Da: @" + update.message.from_user.username + "\nMessaggio: " + text[8:] + "\n#report #bugs #bugs #errori\n"
-    if len(text) > 10:
+    tx = "\nDa: @" + update.message.from_user.username + "\nMessaggio: " + text[8:] + "\n#report #bugs #bugs #errori\n"
+    if len(text) > 10 and text.find(' ') != -1:
         f = open("reports.txt", "a")
         f.write(tx)
         f.close()
@@ -141,4 +155,6 @@ def report(bot, update):
 def startBot(bot, update):
     st = phrases["start"]
     chat_id = update.message.chat_id
+    bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+    time.sleep(sleepTime)
     bot.send_message(chat_id= chat_id, text= st)
