@@ -50,15 +50,19 @@ def getMetroTime(stazione, start, end, time):
     t1 = checkStart(start)
     # print(t1.strftime("%H:%M:%S"))
     module = checkDayTime()
+    delta = timedelta(minutes= module)
     # print(module.strftime("%H:%M:%S"))
-    t3 = t - t1
-    print(t3.strftime("%H:%M:%S"))
-    m = (t.hour * 60) + t.minute
-    minutes = (t3.hour * 60) + t3.minute
-    prevTime = m + (module - (minutes % module))
-    prevH = prevTime // 60
-    prevMin = prevTime % 60
-    return offset(end, stazione, prevH, prevMin)
+    while t1 < t:
+        t1+= delta
+    return offsetTest(end, stazione, t1)
+    #t3 = t - t1
+    #print(t3.strftime("%H:%M:%S"))
+    #m = (t.hour * 60) + t.minute
+    #minutes = (t3.hour * 60) + t3.minute
+    #prevTime = m + (module - (minutes % module))
+    #prevH = prevTime // 60
+    #prevMin = prevTime % 60
+    #return offset(end, stazione, prevH, prevMin)
 
 # def getMetroTime(stazione, start, end):
 #     t = datetime.now()
@@ -81,4 +85,13 @@ def offset(end, stazione, prevH, prevM):
     tx=""
     if(stazione.upper() != end.upper()):
         tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM) + " sono le " + datetime.now().strftime("%H:%M:%S")
+    return tx
+
+def offsetTest(end, stazione, t1):
+    fine = "to"+end.upper()
+    offset = timedelta(minutes= metroTime[stazione.upper()][fine])
+    t1+=offset
+    tx=""
+    if(stazione.upper() != end.upper()):
+        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + t1.strftime("%H:%M") + " sono le " + datetime.now().strftime("%H:%M:%S")
     return tx

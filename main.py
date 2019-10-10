@@ -18,6 +18,7 @@ def main():
     dp.add_handler(CommandHandler('chatid',getChatId))
     dp.add_handler(CommandHandler('readReports',readReports))
     dp.add_handler(CommandHandler('clearReports',clearReports))
+    dp.add_handler(CommandHandler('writeReports',writeOnReportsFile))
     dp.add_handler(CommandHandler('listaComandi',getCommandsList))
     dp.add_handler(CallbackQueryHandler(callback))
     updater.start_polling()

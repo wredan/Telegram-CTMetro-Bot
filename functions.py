@@ -110,6 +110,19 @@ def readReports(bot, update):
     else:
         tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
+
+def writeOnReportsFile(bot, update):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        tx = update.message.text
+        f = open("reports.txt", "w")
+        f.write(tx)
+        f.close()
+        bot.send_message(chat_id= chat_id, text= "file scritto correttamente") 
+    else:
+        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
+        bot.send_message(chat_id= chat_id, text= tx)
+
     
 def report(bot, update):
     chat_id = update.message.chat_id
