@@ -2,21 +2,37 @@
     "startServiceHour": 6,
     "startServiceMinute": 40,
     "endService": 21,
-    "startNesima": {
+    "startNesimaMattina": {
         "hour": 6,
         "minutes": 40
     },
-    "endNesima": {
+    "endNesimaMattina": {
         "hour": 20,
         "minutes": 45
     },
-    "startStesicoro": {
+    "startStesicoroMattina": {
         "hour": 7,
         "minutes": 0
     },
-    "endStesicoro": {
+    "endStesicoroMattina": {
         "hour": 21,
         "minutes": 10
+    },
+    "startNesimaPomeriggio": {
+        "hour": 15,
+        "minutes": 0
+    },
+    "endNesimaPomeriggio": {
+        "hour": 21,
+        "minutes": 0
+    },
+    "startStesicoroPomeriggio": {
+        "hour": 15,
+        "minutes": 25
+    },
+    "endStesicoroPomeriggio": {
+        "hour": 21,
+        "minutes": 25
     },
     "NESIMA": {
         "toSTESICORO": 0,
