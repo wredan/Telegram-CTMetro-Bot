@@ -33,7 +33,6 @@ def main():
     def restart(bot, update):
         chat_id = update.message.chat_id
         if str(chat_id) in config_get["autorizzati"]:
-            print("dentro")
             bot.send_message(chat_id= chat_id, text= 'Riavviando il bot...')
             Thread(target=stop_and_restart).start()
 
