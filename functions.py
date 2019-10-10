@@ -16,20 +16,6 @@ with open('./jsonFiles/config.json', 'r') as f:
     config_get = json.load(f)
 
 sleepTime = 0.200
-def getStationsChoice(bot, update):
-    # if len(update.message.text)>6:
-    #     getMetro()  
-    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA'),
-                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO'),
-                InlineKeyboardButton("MILO", callback_data='MILO')],
-                [InlineKeyboardButton("BORGO", callback_data='BORGO'),
-                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA'),
-                InlineKeyboardButton("ITALIA", callback_data='ITALIA')],
-                [InlineKeyboardButton("GALATEA", callback_data='GALATEA'),
-                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII'),
-                InlineKeyboardButton("STESICORO", callback_data='STESICORO')]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO):', reply_markup=reply_markup)
 
 def callback(bot, update):
     query = update.callback_query
@@ -95,6 +81,21 @@ def getInfo(bot, update):
     time.sleep(sleepTime)
     bot.send_message(chat_id=chat_id, text= info) 
 
+def getStationsChoice(bot, update):
+    # if len(update.message.text)>6:
+    #     getMetro()  
+    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA'),
+                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO'),
+                InlineKeyboardButton("MILO", callback_data='MILO')],
+                [InlineKeyboardButton("BORGO", callback_data='BORGO'),
+                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA'),
+                InlineKeyboardButton("ITALIA", callback_data='ITALIA')],
+                [InlineKeyboardButton("GALATEA", callback_data='GALATEA'),
+                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII'),
+                InlineKeyboardButton("STESICORO", callback_data='STESICORO')]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO):', reply_markup=reply_markup)
+    
 def getStazioni(bot, update):
     mex = ""
     for el in metroTime["STAZIONI"]:
@@ -103,21 +104,6 @@ def getStazioni(bot, update):
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     time.sleep(sleepTime)
     bot.send_message(chat_id= chat_id, text= mex)
-
-def readReports(bot, update):
-    chat_id = update.message.chat_id
-    if str(chat_id) in config_get["autorizzati"]:
-        f = open("reports.txt", "r")
-        tx = f.read()
-        f.close()
-        if len(tx) < 1:
-            tx = "Non ci sono report! Seems we have done a good job 😏"
-        bot.send_message(chat_id= chat_id, text= tx)
-    else:
-        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-        time.sleep(sleepTime)
-        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
-        bot.send_message(chat_id= chat_id, text= tx)
 
 def writeOnReportsFile(bot, update):
     chat_id = update.message.chat_id
@@ -135,7 +121,21 @@ def writeOnReportsFile(bot, update):
         tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
 
-    
+def readReports(bot, update):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        f = open("reports.txt", "r")
+        tx = f.read()
+        f.close()
+        if len(tx) < 1:
+            tx = "Non ci sono report! Seems we have done a good job 😏"
+        bot.send_message(chat_id= chat_id, text= tx)
+    else:
+        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        time.sleep(sleepTime)
+        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
+        bot.send_message(chat_id= chat_id, text= tx)
+
 def report(bot, update):
     chat_id = update.message.chat_id
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)

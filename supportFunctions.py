@@ -58,7 +58,7 @@ def getMetroTime(stazione, start, end, time):
         toff+= delta
     tx=""
     if(stazione.upper() != end.upper()):
-        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
+        tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
 
 def offsetTest(end, stazione, t1):
