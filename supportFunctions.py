@@ -10,8 +10,7 @@ with open('./jsonFiles/metroTimetables.json', 'r') as f:
 with open('./jsonFiles/phrases.json', 'r') as f:
     phrases = json.load(f)
 
-def checkDayTime():
-    t = datetime.now()
+def checkDayTime(t):
     if t.hour < metroTime["splitH"]:
         module = metroTime["MORNING"]
     else:
@@ -19,11 +18,12 @@ def checkDayTime():
     return module
 
 def checkInput(data):
+    data.strip()
     if len(data) <= 5 and data.count(':') == 1:
         times = data.split(':')
-        if times[1].isdigit() and times[2].isdigit():
-            if times[1] >= 0 and times[1] < 24:
-                if times[2] >=0 and times[2] < 60:
+        if times[0].isdigit() and times[1].isdigit():
+            if times[0] >= '0' and times[0] < '24':
+                if times[1] >= '0' and times[1] < '60':
                     return True
     return False
 
@@ -40,29 +40,26 @@ def checkStart(start, module):
             t = timedelta(hours = metroTime["startStesicoroPomeriggio"]["hour"], minutes= metroTime["startStesicoroPomeriggio"]["minutes"])   
     return t
 
-def checkTime(bot, query, sel=0, chat_id=-1, time= datetime.now()):
+def checkTime(bot, update, time):
     t = time
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
     elif t.hour == metroTime["startServiceHour"] and t.minute>=["startServiceMinute"]:
         return True
     else:
-        startNesimaH = metroTime["startNesima"]["hour"]
-        startNesimaM = metroTime["startNesima"]["minutes"]
-        startStesicoroH = metroTime["startStesicoro"]["hour"]
-        startStesicoroM = metroTime["startStesicoro"]["minutes"]
+        startNesimaH = metroTime["startNesimaMattina"]["hour"]
+        startNesimaM = metroTime["startNesimaMattina"]["minutes"]
+        startStesicoroH = metroTime["startStesicoroMattina"]["hour"]
+        startStesicoroM = metroTime["startStesicoroMattina"]["minutes"]
         tx = "Servizio sospeso\n"
         tx+= "Il primo treno disponibile da NESIMA: " + str(startNesimaH) +":"+ str(startNesimaM) +"\n"
-        tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0"
-        if !sel:
-            query.edit_message_text(text= tx)
-        else:
-            bot.send_message(chat_id= chat_id, text= tx)
+        tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0" 
+        bot.send_message(chat_id= update.message.chat_id, text= tx)
         return False
 
 def getMetroTime(stazione, start, end, time):
+    module = checkDayTime(time)
     t = timedelta(hours= time.hour, minutes= time.minute)
-    module = checkDayTime()
     t1 = checkStart(start, module)
     delta = timedelta(minutes= module)
     toff = offsetTest(end, stazione, t1)
@@ -73,46 +70,13 @@ def getMetroTime(stazione, start, end, time):
         tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
 
-def getTime(stazione, orario= datetime.now()):
-    timeNes = getMetroTime(data, "NESIMA", "STESICORO", orario)
-    timeSte = getMetroTime(data, "STESICORO", "NESIMA", orario)
-    time = timeNes+"\n"+timeSte
-    return time
+def getTime(stazione, time):
+    timeNes = getMetroTime(stazione, "NESIMA", "STESICORO", time)
+    timeSte = getMetroTime(stazione, "STESICORO", "NESIMA", time)
+    finalTime = timeNes+"\n"+timeSte
+    return finalTime
 
 def offsetTest(end, stazione, t1):
     fine = "to"+end.upper()
     t1+=timedelta(minutes= metroTime[stazione.upper()][fine])
     return t1
-
-#tutto quello sotto potenzialmente non serve ad un cazzo (:
-    #t3 = t - t1
-    #print(t3.strftime("%H:%M:%S"))
-    #m = (t.hour * 60) + t.minute
-    #minutes = (t3.hour * 60) + t3.minute
-    #prevTime = m + (module - (minutes % module))
-    #prevH = prevTime // 60
-    #prevMin = prevTime % 60
-    #return offset(end, stazione, prevH, prevMin)
-
-# def getMetroTime(stazione, start, end):
-#     t = datetime.now()
-#     t1 = checkStart(start)
-#     module = checkDayTime()
-#     t3 = t - t1
-#     m = (t.hour * 60) + t.minute
-#     minutes = (t3.hour * 60) + t3.minute
-#     prevTime = m + (module - (minutes % module))
-#     prevH = prevTime // 60
-#     prevMin = prevTime % 60
-#     return offset(end, stazione, prevH, prevMin)
-    
-#def offset(end, stazione, prevH, prevM):
-#    fine = "to"+end.upper()
-#    prevM+=metroTime[stazione.upper()][fine]
-#    module = checkDayTime()
-#    if prevM//module == 0:
-#        prevM = "0"+str(prevM%60)
-#    tx=""
-#    if(stazione.upper() != end.upper()):
-#        tx = "metro da "+str(stazione.upper())+" verso "+ str(end.upper()) +": " + str(prevH) + ":" + str(prevM) + " sono le " + datetime.now().strftime("%H:%M:%S")
-#    return tx

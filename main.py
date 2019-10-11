@@ -23,7 +23,7 @@ def main():
     dp.add_handler(CommandHandler('clearReports',clearReports))
     dp.add_handler(CommandHandler('writeReports',writeOnReportsFile))
     dp.add_handler(CommandHandler('listaComandi',getCommandsList))
-    
+
     dp.add_handler(CallbackQueryHandler(callback))
 
     def stop_and_restart():
@@ -36,7 +36,22 @@ def main():
             bot.send_message(chat_id= chat_id, text= 'Riavviando il bot...')
             Thread(target=stop_and_restart).start()
 
+    def shutdown():
+        updater.stop()
+        updater.is_idle = False
+
+    def shutDownBot(bot, update):
+        chat_id = update.message.chat_id
+        text = update.message.text
+        if str(chat_id) in config_get["autorizzati"] :
+            if text == "/shutdownbot " + str(chat_id):
+                bot.send_message(chat_id= chat_id, text= 'Spengo il bot... arrivederci!')
+                Thread(target=shutdown).start()
+            else:
+                bot.send_message(chat_id= chat_id, text= 'Il comando corretto è /shutdownbot <chat_id_autorizzato>, usa /chatid per conoscere il tuo chatid')
+
     dp.add_handler(CommandHandler('restartbot',restart))
+    dp.add_handler(CommandHandler('shutdownbot',shutDownBot))
     updater.start_polling()
     updater.idle()
 

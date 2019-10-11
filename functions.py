@@ -2,9 +2,13 @@
 
 from telegram import KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from datetime import datetime
+from threading import Thread
 from supportFunctions import *
 import json
 import time
+import os
+import sys
 
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
@@ -26,13 +30,13 @@ def callback(bot, update):
         query.edit_message_text(text= "File ripulito correttamente")
     elif str(query.data) == "none":
         query.edit_message_text(text= "Operazione annullata")
-    elif checkTime(bot, update, sel= 1, chat_id= update.message.chat_id):
+    else:
         data = query.data.split('-')
-        time = ""
-        if data[2]
-            time = getTime(stazione= data[1], orario= data[2])
-        else:
-            time = getTime(stazione= data[1])
+        x = datetime.now()
+        if data[1] != "/metro":
+            orario = data[1].split(':')
+            x = datetime(x.year, x.month, x.day, int(orario[0]), int(orario[1]))
+        time = getTime(data[0], x)
         query.edit_message_text(text= time)
 
 def clearReports(bot, update):
@@ -40,11 +44,6 @@ def clearReports(bot, update):
     if str(chat_id) in config_get["autorizzati"]:
         keyboard = [[InlineKeyboardButton("Si", callback_data='clearReportFile'), InlineKeyboardButton("No", callback_data='none')]]
         update.message.reply_text('Sicuro di voler eliminare tutti i report?', reply_markup=InlineKeyboardMarkup(keyboard))
-    else:
-        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-        time.sleep(sleepTime)
-        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
-        bot.send_message(chat_id= chat_id, text= tx)
 
 def donate(bot, update):
     chat_id = update.message.chat_id
@@ -85,28 +84,31 @@ def getInfo(bot, update):
     bot.send_message(chat_id=chat_id, text= info) 
 
 def getMetro(bot, update):
-    tx = update.message.text
-    if len(tx) > 7 and checkInput(tx[7:])):
-        times = tx.split(':')
-        time = timedelta(hours= times[1], minutes= times[2])
-    getStationsChoice(bot, update, time)
-        else:
-
+    tx = update.message.text.strip()
+    x = datetime.now()
+    if tx == "/metro":
+        if checkTime(bot, update, x):
+            getStationsChoice(bot, update, tx)
+    elif len(tx) > 7 and checkInput(tx[7:]):
+        time = tx[7:].split(':')
+        if checkTime(bot, update, datetime(x.year, x.month, x.day, int(time[0]), int(time[1]))):
+            getStationsChoice(bot, update, tx[7:])
+    else:
+        bot.send_message(chat_id= update.message.chat_id, text= phrases["errMetro"])
 
 def getStationsChoice(bot, update, orario):
-    # if len(update.message.text)>6:
-    #     getMetro()
-    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA-'+orario),
-                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO-'+orario),
-                InlineKeyboardButton("MILO", callback_data='MILO-'+orario)],
-                [InlineKeyboardButton("BORGO", callback_data='BORGO-'+orario),
-                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA-'+orario),
-                InlineKeyboardButton("ITALIA", callback_data='ITALIA-'+orario)],
-                [InlineKeyboardButton("GALATEA", callback_data='GALATEA-'+orario),
-                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII-'+orario),
-                InlineKeyboardButton("STESICORO", callback_data='STESICORO-'+orario)]]
+    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA-'+ str(orario)),
+                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO-'+ str(orario)),
+                InlineKeyboardButton("MILO", callback_data='MILO-'+ str(orario))],
+                [InlineKeyboardButton("BORGO", callback_data='BORGO-'+ str(orario)),
+                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA-'+ str(orario)),
+                InlineKeyboardButton("ITALIA", callback_data='ITALIA-'+ str(orario))],
+                [InlineKeyboardButton("GALATEA", callback_data='GALATEA-'+ str(orario)),
+                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII-'+ str(orario)),
+                InlineKeyboardButton("STESICORO", callback_data='STESICORO-'+ str(orario))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO):', reply_markup=reply_markup)
+   
     
 def getStazioni(bot, update):
     mex = ""
@@ -128,10 +130,6 @@ def writeOnReportsFile(bot, update):
             bot.send_message(chat_id= chat_id, text= "file scritto correttamente")
         else:
             bot.send_message(chat_id= chat_id, text= "testo non valido o troppo corto")
-    else:
-        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
-        bot.send_message(chat_id= chat_id, text= tx)
 
 def readReports(bot, update):
     chat_id = update.message.chat_id
@@ -141,11 +139,6 @@ def readReports(bot, update):
         f.close()
         if len(tx) < 1:
             tx = "Non ci sono report! Seems we have done a good job 😏"
-        bot.send_message(chat_id= chat_id, text= tx)
-    else:
-        bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-        time.sleep(sleepTime)
-        tx = "Ciao " + update.message.from_user.first_name + phrases["readReports"]
         bot.send_message(chat_id= chat_id, text= tx)
 
 def report(bot, update):
