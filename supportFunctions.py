@@ -40,8 +40,8 @@ def checkStart(start, module):
             t = timedelta(hours = metroTime["startStesicoroPomeriggio"]["hour"], minutes= metroTime["startStesicoroPomeriggio"]["minutes"])   
     return t
 
-def checkTime(bot, query, sel=0, chat_id=-1):
-    t = datetime.now()
+def checkTime(bot, query, sel=0, chat_id=-1, time= datetime.now()):
+    t = time
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
     elif t.hour == metroTime["startServiceHour"] and t.minute>=["startServiceMinute"]:
@@ -73,9 +73,9 @@ def getMetroTime(stazione, start, end, time):
         tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
 
-def getTime(data):
-    timeNes = getMetroTime(data, "NESIMA", "STESICORO", datetime.now())
-    timeSte = getMetroTime(data, "STESICORO", "NESIMA", datetime.now())
+def getTime(stazione, orario= datetime.now()):
+    timeNes = getMetroTime(data, "NESIMA", "STESICORO", orario)
+    timeSte = getMetroTime(data, "STESICORO", "NESIMA", orario)
     time = timeNes+"\n"+timeSte
     return time
 

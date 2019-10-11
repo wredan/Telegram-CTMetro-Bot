@@ -26,8 +26,13 @@ def callback(bot, update):
         query.edit_message_text(text= "File ripulito correttamente")
     elif str(query.data) == "none":
         query.edit_message_text(text= "Operazione annullata")
-    elif checkTime(bot, query):
-        time = getTime(query.data)
+    elif checkTime(bot, update, sel= 1, chat_id= update.message.chat_id):
+        data = query.data.split('-')
+        time = ""
+        if data[2]
+            time = getTime(stazione= data[1], orario= data[2])
+        else:
+            time = getTime(stazione= data[1])
         query.edit_message_text(text= time)
 
 def clearReports(bot, update):
@@ -81,26 +86,25 @@ def getInfo(bot, update):
 
 def getMetro(bot, update):
     tx = update.message.text
-    if len(tx) < 7:
-        getStationsChoice(bot, update)
-    elif checkTime(bot, update, sel= 1, chat_id= update.message.chat_id) and checkInput(tx[7:]):
+    if len(tx) > 7 and checkInput(tx[7:])):
         times = tx.split(':')
         time = timedelta(hours= times[1], minutes= times[2])
-        t = getTime(time)
-        bot.send_message(chat_id= update.message.chat_id, text= t)
+    getStationsChoice(bot, update, time)
+        else:
 
-def getStationsChoice(bot, update):
+
+def getStationsChoice(bot, update, orario):
     # if len(update.message.text)>6:
-    #     getMetro()  
-    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA'),
-                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO'),
-                InlineKeyboardButton("MILO", callback_data='MILO')],
-                [InlineKeyboardButton("BORGO", callback_data='BORGO'),
-                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA'),
-                InlineKeyboardButton("ITALIA", callback_data='ITALIA')],
-                [InlineKeyboardButton("GALATEA", callback_data='GALATEA'),
-                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII'),
-                InlineKeyboardButton("STESICORO", callback_data='STESICORO')]]
+    #     getMetro()
+    keyboard = [[InlineKeyboardButton("NESIMA", callback_data='NESIMA-'+orario),
+                InlineKeyboardButton("SAN NULLO", callback_data='SAN NULLO-'+orario),
+                InlineKeyboardButton("MILO", callback_data='MILO-'+orario)],
+                [InlineKeyboardButton("BORGO", callback_data='BORGO-'+orario),
+                InlineKeyboardButton("GIUFFRIDA", callback_data='GIUFFRIDA-'+orario),
+                InlineKeyboardButton("ITALIA", callback_data='ITALIA-'+orario)],
+                [InlineKeyboardButton("GALATEA", callback_data='GALATEA-'+orario),
+                InlineKeyboardButton("GIOVANNI XXIII", callback_data='GIOVANNI XXIII-'+orario),
+                InlineKeyboardButton("STESICORO", callback_data='STESICORO-'+orario)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO):', reply_markup=reply_markup)
     
