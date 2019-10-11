@@ -27,9 +27,7 @@ def callback(bot, update):
     elif str(query.data) == "none":
         query.edit_message_text(text= "Operazione annullata")
     elif checkTime(bot, query):
-        timeNes = getMetroTime(query.data, "NESIMA", "STESICORO", datetime.now())
-        timeSte = getMetroTime(query.data, "STESICORO", "NESIMA", datetime.now())
-        time = timeNes+"\n"+timeSte
+        time = getTime(query.data)
         query.edit_message_text(text= time)
 
 def clearReports(bot, update):
@@ -80,6 +78,16 @@ def getInfo(bot, update):
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     time.sleep(sleepTime)
     bot.send_message(chat_id=chat_id, text= info) 
+
+def getMetro(bot, update):
+    tx = update.message.text
+    if len(tx) < 7:
+        getStationsChoice(bot, update)
+    elif checkTime(bot, update, sel= 1, chat_id= update.message.chat_id) and checkInput(tx[7:]):
+        times = tx.split(':')
+        time = timedelta(hours= times[1], minutes= times[2])
+        t = getTime(time)
+        bot.send_message(chat_id= update.message.chat_id, text= t)
 
 def getStationsChoice(bot, update):
     # if len(update.message.text)>6:

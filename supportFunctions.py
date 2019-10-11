@@ -18,6 +18,15 @@ def checkDayTime():
         module = metroTime["AFTERNOON"]
     return module
 
+def checkInput(data):
+    if len(data) <= 5 and data.count(':') == 1:
+        times = data.split(':')
+        if times[1].isdigit() and times[2].isdigit():
+            if times[1] >= 0 and times[1] < 24:
+                if times[2] >=0 and times[2] < 60:
+                    return True
+    return False
+
 def checkStart(start, module):
     if start == "NESIMA":
         if module != 15:
@@ -31,7 +40,7 @@ def checkStart(start, module):
             t = timedelta(hours = metroTime["startStesicoroPomeriggio"]["hour"], minutes= metroTime["startStesicoroPomeriggio"]["minutes"])   
     return t
 
-def checkTime(bot, query):
+def checkTime(bot, query, sel=0, chat_id=-1):
     t = datetime.now()
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
@@ -45,7 +54,10 @@ def checkTime(bot, query):
         tx = "Servizio sospeso\n"
         tx+= "Il primo treno disponibile da NESIMA: " + str(startNesimaH) +":"+ str(startNesimaM) +"\n"
         tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0"
-        query.edit_message_text(text= tx)
+        if !sel:
+            query.edit_message_text(text= tx)
+        else:
+            bot.send_message(chat_id= chat_id, text= tx)
         return False
 
 def getMetroTime(stazione, start, end, time):
@@ -60,6 +72,12 @@ def getMetroTime(stazione, start, end, time):
     if(stazione.upper() != end.upper()):
         tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
+
+def getTime(data):
+    timeNes = getMetroTime(data, "NESIMA", "STESICORO", datetime.now())
+    timeSte = getMetroTime(data, "STESICORO", "NESIMA", datetime.now())
+    time = timeNes+"\n"+timeSte
+    return time
 
 def offsetTest(end, stazione, t1):
     fine = "to"+end.upper()

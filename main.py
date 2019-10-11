@@ -13,7 +13,7 @@ def main():
     dp.add_handler(CommandHandler('start',startBot))
     dp.add_handler(CommandHandler('help',getHelp))
     dp.add_handler(CommandHandler('info',getInfo))
-    dp.add_handler(CommandHandler('metro',getStationsChoice))
+    dp.add_handler(CommandHandler('metro',getMetro))
     dp.add_handler(CommandHandler('stazioni',getStazioni))
     dp.add_handler(CommandHandler('autori',getAuthor))
     dp.add_handler(CommandHandler('donate',donate))
