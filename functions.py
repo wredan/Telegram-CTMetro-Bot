@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
+from telegram import KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from supportFunctions import *
 import json
@@ -9,7 +9,7 @@ import time
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
 
-with open('./jsonFiles/phrases.json', 'r', errors='ignore') as f:
+with open('./jsonFiles/phrases.json', 'r') as f:
     phrases = json.load(f)
 
 with open('./jsonFiles/config.json', 'r') as f:
