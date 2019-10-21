@@ -22,8 +22,8 @@ def checkInput(data):
     if len(data) <= 5 and data.count(':') == 1:
         times = data.split(':')
         if times[0].isdigit() and times[1].isdigit():
-            if times[0] >= '0' and times[0] < '24':
-                if times[1] >= '0' and times[1] < '60':
+            if int(times[0]) >= 0 and int(times[0]) < 24:
+                if int(times[1]) >= 0 and int(times[1]) < 60:
                     return True
     return False
 

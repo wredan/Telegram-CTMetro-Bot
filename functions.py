@@ -51,7 +51,7 @@ def donate(bot, update):
     bot.send_message(chat_id= chat_id, text= phrases["donate"])
 
 def getAuthor(bot, update):
-    aut = phrases["author"]
+    aut = phrases["chiSiamo"]
     chat_id = update.message.chat_id
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     time.sleep(sleepTime)
