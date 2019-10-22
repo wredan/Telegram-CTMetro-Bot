@@ -21,6 +21,7 @@ with open('./jsonFiles/config.json', 'r') as f:
     config_get = json.load(f)
 
 sleepTime = 0.200
+tz = pytz.timezone('Europe/Rome')
 
 def callback(bot, update):
     query = update.callback_query
@@ -33,7 +34,7 @@ def callback(bot, update):
         query.edit_message_text(text= "Operazione annullata")
     else:
         data = query.data.split('-')
-        x = datetime.now()
+        x = datetime.now(tz)
         if data[1] != "/metro":
             orario = data[1].split(':')
             x = datetime(x.year, x.month, x.day, int(orario[0]), int(orario[1]))
@@ -86,7 +87,6 @@ def getInfo(bot, update):
 
 def getMetro(bot, update):
     tx = update.message.text.strip()
-    tz = pytz.timezone('Europe/Rome')
     x = datetime.now(tz)
     if tx == "/metro":
         if checkTime(bot, update, x):
