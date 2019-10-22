@@ -9,6 +9,7 @@ import json
 import time
 import os
 import sys
+import pytz
 
 with open('./jsonFiles/metroTimetables.json', 'r') as f:
     metroTime = json.load(f)
@@ -85,7 +86,8 @@ def getInfo(bot, update):
 
 def getMetro(bot, update):
     tx = update.message.text.strip()
-    x = datetime.now()
+    tz = pytz.timezone('Europe/Rome')
+    x = datetime.now(tz)
     if tx == "/metro":
         if checkTime(bot, update, x):
             getStationsChoice(bot, update, tx)
