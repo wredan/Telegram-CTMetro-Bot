@@ -5,7 +5,7 @@ import os
 import sys
 from threading import Thread
 
-with open('./jsonFiles/config.json', 'r') as f:
+with open('./config/config.json', 'r') as f:
     config_get = json.load(f)
 
 def main():

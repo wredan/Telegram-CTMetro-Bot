@@ -3,7 +3,6 @@
 from telegram import KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from datetime import datetime
-from threading import Thread
 from supportFunctions import *
 import json
 import time
@@ -17,7 +16,7 @@ with open('./jsonFiles/metroTimetables.json', 'r') as f:
 with open('./jsonFiles/phrases.json', 'r') as f:
     phrases = json.load(f)
 
-with open('./jsonFiles/config.json', 'r') as f:
+with open('./config/config.json', 'r') as f:
     config_get = json.load(f)
 
 sleepTime = 0.200
@@ -26,7 +25,7 @@ tz = pytz.timezone('Europe/Rome')
 def callback(bot, update):
     query = update.callback_query
     if str(query.data) == "clearReportFile":
-        f = open("reports.txt", "w")
+        f = open("./data/reports.txt", "w")
         f.write('')
         f.close()
         query.edit_message_text(text= "File ripulito correttamente")
@@ -126,7 +125,7 @@ def writeOnReportsFile(bot, update):
     if str(chat_id) in config_get["autorizzati"]:
         tx = update.message.text
         if len(tx) > 14:
-            f = open("reports.txt", "w")
+            f = open("./data/reports.txt", "w")
             f.write(tx[14:])
             f.close()
             bot.send_message(chat_id= chat_id, text= "file scritto correttamente")
@@ -136,7 +135,7 @@ def writeOnReportsFile(bot, update):
 def readReports(bot, update):
     chat_id = update.message.chat_id
     if str(chat_id) in config_get["autorizzati"]:
-        f = open("reports.txt", "r")
+        f = open("./data/reports.txt", "r")
         tx = f.read()
         f.close()
         if len(tx) < 1:
@@ -150,7 +149,7 @@ def report(bot, update):
     text = update.message.text
     tx = "\nDa: @" + update.message.from_user.username + "\nMessaggio: " + text[8:] + "\n#report #bugs #bugs #errori\n"
     if len(text) > 10 and text.find(' ') != -1:
-        f = open("reports.txt", "a")
+        f = open("./data/reports.txt", "a")
         f.write(tx)
         f.close()
         bot.send_message(chat_id= chat_id, text= phrases["succReport"])
