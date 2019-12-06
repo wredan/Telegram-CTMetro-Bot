@@ -4,5 +4,5 @@
         "",
         ""
     ],
-    "commandsList":"Lista completa di tutti i comandi:\n\nComandi User\n /metro - restituisce l'orario della prossima metro per la stazione indicata\n /metro <ora>:<minuti> - stesso ruolo di /metro, permette però di inserire un'ora a piacere\n /stazioni - lista delle stazioni disponibili\n /info - fornisce informazioni riguardanti il bot\n /chisiamo - lista degli autori del bot\n /report <testo> - segnala malfunzionamenti agli sviluppatori.\n /aiuto - fornisce aiuto agli utenti\n /dona - regala un caffè agli sviluppatori\n\n Comandi Admin:\n /chatid - restituisce il chat_id\n /readreports - legge i report inviati dal file\n /clearreports - cancella tutti i report\n /writereports <testo> - scrive sul file i reports, da usare per eventualmente cancellare quelli già visionati\n /listacomandi - restituisce questo messaggio se admin, /aiuto se user\n /restartbot - riavvia il bot, circa 10/15 sec, dipende dal sistema\n /shutdownbot <chat_id_autorizzato> - spegne il bot, circa 10/15 sec, dipende dal sistema"
+    "commandsList":""
 }
