@@ -1,0 +1,77 @@
+{
+    "startServiceHour": 6,
+    "startServiceMinute": 40,
+    "endService": 21,
+    "startNesimaMattina": {
+        "hour": 6,
+        "minutes": 40
+    },
+    "endNesimaMattina": {
+        "hour": 20,
+        "minutes": 45
+    },
+    "startStesicoroMattina": {
+        "hour": 7,
+        "minutes": 0
+    },
+    "endStesicoroMattina": {
+        "hour": 21,
+        "minutes": 10
+    },
+    "startNesimaPomeriggio": {
+        "hour": 15,
+        "minutes": 0
+    },
+    "endNesimaPomeriggio": {
+        "hour": 21,
+        "minutes": 0
+    },
+    "startStesicoroPomeriggio": {
+        "hour": 15,
+        "minutes": 25
+    },
+    "endStesicoroPomeriggio": {
+        "hour": 21,
+        "minutes": 25
+    },
+    "NESIMA": {
+        "toSTESICORO": 0,
+        "toNESIMA": 16
+    },
+    "SAN NULLO": {
+        "toSTESICORO": 2,
+        "toNESIMA": 14
+    },
+    "MILO": {
+        "toSTESICORO": 5,
+        "toNESIMA": 11
+    },
+    "BORGO": {
+        "toSTESICORO": 7,
+        "toNESIMA": 9
+    },
+    "GIUFFRIDA": {
+        "toSTESICORO": 8,
+        "toNESIMA":7
+    },
+    "ITALIA": {
+        "toSTESICORO": 10,
+        "toNESIMA": 6
+    },
+    "GALATEA": {
+        "toSTESICORO": 12,
+        "toNESIMA": 4
+    },
+    "GIOVANNI XXIII": {
+        "toSTESICORO": 14,
+        "toNESIMA": 2
+    },
+    "STESICORO": {
+        "toSTESICORO": 17,
+        "toNESIMA": 0
+    },
+    "MORNING": 10,
+    "AFTERNOON": 15,
+    "splitH": 15,
+    "STAZIONI": ["NESIMA", "SAN NULLO", "MILO", "BORGO", "GIUFFRIDA", "ITALIA", "GALATEA", "GIOVANNI XXIII", "STESICORO"]
+}
