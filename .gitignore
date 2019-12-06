@@ -1,4 +1,8 @@
 .vscode
+__pycache__/
+
+#data
+*.json
 
 # Prerequisites
 *.d
