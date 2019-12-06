@@ -1,5 +1,6 @@
 # Telegram-CTMetrobot-Bot
-
+CTmetrobot lets you know the estimated time of the Catania's next coming underground train in a station or you can use it to find a specific underground train by typing hh:mm time. Let's find out here:
+* [@ct_metrobot](http://telegram.me/ct_metrobot)
 ---
 
 ### Setting up a local istance
