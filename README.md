@@ -7,9 +7,7 @@ CTmetrobot lets you know the estimated time of the Catania's next coming undergr
 If you want to test the bot by creating your personal istance, follow this steps:
 * **Clone this repository** or download it as zip.
 * **Send a message to your bot** on Telegram, even '/start' will do. If you don't, you could get an error
-* Copy the file config/settings.json.dist into config/settings.json (If you don't have a token, message Telegram's [@BotFather](http://telegram.me/Botfather) to create a bot and get a token for it)
-* Copy the file jsonFiles/metroTimetables.json.dist into jsonFiles/metroTimetables.json
-* Copy the file jsonFiles/phrases.json.dist into jsonFiles/phrases.json
+* Copy the file config/config.json.dist into config/config.json (If you don't have a token, message Telegram's [@BotFather](http://telegram.me/Botfather) to create a bot and get a token for it)
 * Fill this new files with your data
 * Now you can launch "main.py" with your Python3 interpreter
 
