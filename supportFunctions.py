@@ -5,10 +5,10 @@ from datetime import timedelta
 from datetime import datetime
 import json
 
-with open('./jsonFiles/metroTimetables.json', 'r') as f:
+with open('./jsonFiles/metroTimetables.json', 'r', errors='ignore') as f:
     metroTime = json.load(f)
 
-with open('./jsonFiles/phrases.json', 'r') as f:
+with open('./jsonFiles/phrases.json', 'r', errors='ignore') as f:
     phrases = json.load(f)
 
 def check_day_time(t):

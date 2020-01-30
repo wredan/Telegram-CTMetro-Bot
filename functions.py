@@ -11,13 +11,13 @@ import sys
 import pytz
 import logging
 
-with open('./jsonFiles/metroTimetables.json', 'r') as f:
+with open('./jsonFiles/metroTimetables.json', 'r',errors='ignore') as f:
     metroTime = json.load(f)
 
-with open('./jsonFiles/phrases.json', 'r') as f:
+with open('./jsonFiles/phrases.json', 'r', errors='ignore') as f:
     phrases = json.load(f)
 
-with open('./config/config.json', 'r') as f:
+with open('./config/config.json', 'r', errors='ignore') as f:
     config_get = json.load(f)
 
 # Enable logging

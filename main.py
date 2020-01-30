@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from functions import *
 import json
 import os
@@ -7,7 +8,7 @@ from threading import Thread
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
 
 
-with open('./config/config.json', 'r') as f:
+with open('./config/config.json', 'r', errors='ignore') as f:
     config_get = json.load(f)
 
 def main():
