@@ -1,15 +1,61 @@
 # -*- coding: utf-8 -*-
 
-from telegram import ReplyKeyboardMarkup
-from datetime import timedelta
-from datetime import datetime
-import json
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import Updater, ConversationHandler, CallbackContext
+from datetime import datetime, timedelta
+from Modules.Keyboard import *
+from Settings import *
+import time
+import pytz
 
-with open('./jsonFiles/metroTimetables.json', 'r', errors='ignore') as f:
-    metroTime = json.load(f)
+tz = pytz.timezone('Europe/Rome')
 
-with open('./jsonFiles/phrases.json', 'r', errors='ignore') as f:
-    phrases = json.load(f)
+STAZIONE, ORARIO, SCEGLIORARIO = range(3)
+
+def get_stazione(update, context: CallbackContext):
+    reply_keyboard = []
+    for el in metroTime["STAZIONI"]:
+        reply_keyboard.append([el])
+    update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO).\n\n Digita /cancella per terminare la richiesta', 
+                                reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True))
+    return STAZIONE
+
+def get_orario(update, context: CallbackContext):
+    context.user_data["Stazione"] = update.message.text
+    update.message.reply_text(
+        'Bene, a che ora ti interessa sapere la prossima metro?\n\n Digita /cancella per terminare la richiesta',
+        reply_markup=ReplyKeyboardMarkup(get_scelta_orario_keyboard(), resize_keyboard=True))
+    return ORARIO
+
+def get_next_metro(update, context: CallbackContext):
+    tx = update.message.text.strip()    
+    if tx == "Adesso":
+        x = datetime.now(tz)
+        if check_time(update, context, x):
+            final_time = get_metro_time(context.user_data["Stazione"], x)
+            update.message.reply_text(final_time, reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+        return ConversationHandler.END
+    elif tx == "Scegli orario":
+        update.message.reply_text('Srivi un orario (formato hh:mm) per il quale vuoi sapere la prossima metro disponibile.\n\n Digita /cancella per terminare la richiesta',
+        reply_markup= ReplyKeyboardRemove())
+        return SCEGLIORARIO
+    else:
+        update.message.reply_text('Scelta non valida, attieniti alle opzioni presenti in tastiera.\n\n Digita /cancella per terminare la richiesta')        
+        return ORARIO   
+    
+def scegli_orario(update, context: CallbackContext):
+    tx = update.message.text.strip()
+    x = datetime.now(tz)
+    if check_input(tx) and tx != "":
+        time = tx.split(':')
+        t = datetime(x.year, x.month, x.day, int(time[0]), int(time[1]))
+        if check_time(update, update, t):
+            final_time = get_metro_time(context.user_data["Stazione"], t)
+            update.message.reply_text(final_time, reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+        return ConversationHandler.END
+    else:
+        update.message.reply_text('Formato dell\'ora non valido, il formato accettato è hh:mm')        
+        return SCEGLIORARIO
 
 def check_day_time(t):
     if t.hour < metroTime["splitH"]:
@@ -82,9 +128,3 @@ def offset_test(end, stazione, t1):
     fine = "to"+end.upper()
     t1+=timedelta(minutes= metroTime[stazione.upper()][fine])
     return t1
-
-def get_default_keyboard():
-    reply_keyboard = [['🚇 Metro', '🚉 Stazioni', 'ℹ️ Info'],
-                      ['👨‍💻 Chi siamo', '💙 Dona', '📢 Report'],
-                      ['📜 Lista comandi']]
-    return reply_keyboard

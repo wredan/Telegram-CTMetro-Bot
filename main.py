@@ -1,33 +1,34 @@
 # -*- coding: utf-8 -*-
 
-from functions import *
 import json
 import os
 import sys
 from threading import Thread
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
-
-
-with open('./config/config.json', 'r', errors='ignore') as f:
-    config_get = json.load(f)
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
+from Functions import *
+from Settings import *
 
 def main():
     updater = Updater(token=config_get["token"], use_context=True)
     dp = updater.dispatcher
+    dp.add_handler(CommandHandler('metro',new_metro))
     dp.add_handler(CommandHandler('start',start_bot))
     dp.add_handler(CommandHandler('chatid',get_chat_id))
-    dp.add_handler(CommandHandler('readReports',readReports))
-    dp.add_handler(CommandHandler('clearReports',clearReports))
-    dp.add_handler(CommandHandler('writeReports',writeOnReportsFile))
+
     dp.add_handler(MessageHandler(Filters.regex('Aiuto'), get_help))
     dp.add_handler(MessageHandler(Filters.regex('ℹ️ Info'), get_info))
     dp.add_handler(MessageHandler(Filters.regex('🚉 Stazioni'), get_stazioni))
     dp.add_handler(MessageHandler(Filters.regex('👨‍💻 Chi siamo'), get_author))
     dp.add_handler(MessageHandler(Filters.regex('💙 Dona'), donate))
     dp.add_handler(MessageHandler(Filters.regex('📜 Lista comandi'),get_lista_comandi))
+
+    dp.add_handler(MessageHandler(Filters.regex('📜 Leggi report'), read_reports))
+    dp.add_handler(MessageHandler(Filters.regex('❌ Elimina report'), clear_reports))
+    dp.add_handler(MessageHandler(Filters.regex('🔙 Back'), back))
+    
     dp.add_handler(CallbackQueryHandler(callback))
 
-    conv_handler = ConversationHandler(
+    metro = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex('🚇 Metro'), get_stazione)],
 
         states={
@@ -42,18 +43,29 @@ def main():
         fallbacks=[CommandHandler('cancella', cancel)]
     )
 
-    conv_hand = ConversationHandler(
+    client_report = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex('📢 Report'), report)],
 
         states={
-            REPMESSAGE: [MessageHandler(Filters.text, send_report)],                      
+            SENDMESSAGE: [MessageHandler(Filters.text, send_report)],                      
         },
 
         fallbacks=[CommandHandler('cancella', cancel)]
     )
+
+    admin_report = ConversationHandler(
+        entry_points=[MessageHandler(Filters.regex('✏️ Scrivi file report'), report_message)],
+
+        states={
+            WRITEMESSAGE: [MessageHandler(Filters.text, write_report)],                      
+        },
+
+        fallbacks=[CommandHandler('cancella', abort_report)]
+    )
     
-    dp.add_handler(conv_handler)
-    dp.add_handler(conv_hand)
+    dp.add_handler(metro)
+    dp.add_handler(client_report)
+    dp.add_handler(admin_report)
 
     dp.add_error_handler(error)
 
