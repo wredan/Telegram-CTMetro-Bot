@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from telegram import ReplyKeyboardMarkup
 from datetime import timedelta
 from datetime import datetime
 import json
@@ -10,14 +11,14 @@ with open('./jsonFiles/metroTimetables.json', 'r') as f:
 with open('./jsonFiles/phrases.json', 'r') as f:
     phrases = json.load(f)
 
-def checkDayTime(t):
+def check_day_time(t):
     if t.hour < metroTime["splitH"]:
         module = metroTime["MORNING"]
     else:
         module = metroTime["AFTERNOON"]
     return module
 
-def checkInput(data):
+def check_input(data):
     data.strip()
     if len(data) <= 5 and data.count(':') == 1:
         times = data.split(':')
@@ -27,7 +28,7 @@ def checkInput(data):
                     return True
     return False
 
-def checkStart(start, module):
+def check_start(start, module):
     if start == "NESIMA":
         if module != 15:
             t = timedelta(hours = metroTime["startNesimaMattina"]["hour"], minutes= metroTime["startNesimaMattina"]["minutes"])
@@ -40,7 +41,7 @@ def checkStart(start, module):
             t = timedelta(hours = metroTime["startStesicoroPomeriggio"]["hour"], minutes= metroTime["startStesicoroPomeriggio"]["minutes"])   
     return t
 
-def checkTime(bot, update, time):
+def check_time(update, context, time):
     t = time
     if t.hour > metroTime["startServiceHour"] and t.hour <= metroTime["endService"] - 1:
         return True
@@ -54,15 +55,16 @@ def checkTime(bot, update, time):
         tx = "Servizio sospeso\n"
         tx+= "Il primo treno disponibile da NESIMA: " + str(startNesimaH) +":"+ str(startNesimaM) +"\n"
         tx+= "Il primo treno disponibile da STESICORO: " + str(startStesicoroH) +":"+ str(startStesicoroM) + "0" 
-        bot.send_message(chat_id= update.message.chat_id, text= tx)
-        return False
+        update.message.reply_text(tx, reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+    return False
 
-def getMetroTime(stazione, start, end, time):
-    module = checkDayTime(time)
+def get_time(stazione, start, end, time):
+    module = check_day_time(time)
     t = timedelta(hours= time.hour, minutes= time.minute)
-    t1 = checkStart(start, module)
+    t1 = check_start(start, module)
     delta = timedelta(minutes= module)
-    toff = offsetTest(end, stazione, t1)
+    toff = offset_test(end, stazione, t1)
+    
     while toff < t:
         toff+= delta
     tx=""
@@ -70,13 +72,19 @@ def getMetroTime(stazione, start, end, time):
         tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
 
-def getTime(stazione, time):
-    timeNes = getMetroTime(stazione, "NESIMA", "STESICORO", time)
-    timeSte = getMetroTime(stazione, "STESICORO", "NESIMA", time)
+def get_metro_time(stazione, time):
+    timeNes = get_time(stazione, "NESIMA", "STESICORO", time)
+    timeSte = get_time(stazione, "STESICORO", "NESIMA", time)
     finalTime = timeNes+"\n"+timeSte
     return finalTime
 
-def offsetTest(end, stazione, t1):
+def offset_test(end, stazione, t1):
     fine = "to"+end.upper()
     t1+=timedelta(minutes= metroTime[stazione.upper()][fine])
     return t1
+
+def get_default_keyboard():
+    reply_keyboard = [['🚇 Metro', '🚉 Stazioni', 'ℹ️ Info'],
+                      ['👨‍💻 Chi siamo', '💙 Dona', '📢 Report'],
+                      ['📜 Lista comandi']]
+    return reply_keyboard

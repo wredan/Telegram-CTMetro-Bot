@@ -4,28 +4,57 @@ import json
 import os
 import sys
 from threading import Thread
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+
 
 with open('./config/config.json', 'r') as f:
     config_get = json.load(f)
 
 def main():
-    updater = Updater(token=config_get["token"])
+    updater = Updater(token=config_get["token"], use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('start',startBot))
-    dp.add_handler(CommandHandler('aiuto',getHelp))
-    dp.add_handler(CommandHandler('info',getInfo))
-    dp.add_handler(CommandHandler('metro',getMetro))
-    dp.add_handler(CommandHandler('stazioni',getStazioni))
-    dp.add_handler(CommandHandler('chisiamo',getAuthor))
-    dp.add_handler(CommandHandler('dona',donate))
-    dp.add_handler(CommandHandler('report',report))
-    dp.add_handler(CommandHandler('chatid',getChatId))
+    dp.add_handler(CommandHandler('start',start_bot))
+    dp.add_handler(CommandHandler('chatid',get_chat_id))
     dp.add_handler(CommandHandler('readReports',readReports))
     dp.add_handler(CommandHandler('clearReports',clearReports))
     dp.add_handler(CommandHandler('writeReports',writeOnReportsFile))
-    dp.add_handler(CommandHandler('listaComandi',getCommandsList))
-
+    dp.add_handler(MessageHandler(Filters.regex('Aiuto'), get_help))
+    dp.add_handler(MessageHandler(Filters.regex('ℹ️ Info'), get_info))
+    dp.add_handler(MessageHandler(Filters.regex('🚉 Stazioni'), get_stazioni))
+    dp.add_handler(MessageHandler(Filters.regex('👨‍💻 Chi siamo'), get_author))
+    dp.add_handler(MessageHandler(Filters.regex('💙 Dona'), donate))
+    dp.add_handler(MessageHandler(Filters.regex('📜 Lista comandi'),get_lista_comandi))
     dp.add_handler(CallbackQueryHandler(callback))
+
+    conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(Filters.regex('🚇 Metro'), get_stazione)],
+
+        states={
+            STAZIONE: [MessageHandler(Filters.text, get_orario)],
+
+            ORARIO: [MessageHandler(Filters.regex('^(Adesso|Scegli orario)$'), get_next_metro)],            
+
+            SCEGLIORARIO: [MessageHandler(Filters.text, scegli_orario)]
+                      
+        },
+
+        fallbacks=[CommandHandler('cancella', cancel)]
+    )
+
+    conv_hand = ConversationHandler(
+        entry_points=[MessageHandler(Filters.regex('📢 Report'), report)],
+
+        states={
+            REPMESSAGE: [MessageHandler(Filters.text, send_report)],                      
+        },
+
+        fallbacks=[CommandHandler('cancella', cancel)]
+    )
+    
+    dp.add_handler(conv_handler)
+    dp.add_handler(conv_hand)
+
+    dp.add_error_handler(error)
 
     def stop_and_restart():
         updater.stop()
