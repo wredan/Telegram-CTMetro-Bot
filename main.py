@@ -30,36 +30,27 @@ def main():
 
     metro = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex('🚇 Metro'), get_stazione)],
-
         states={
             STAZIONE: [MessageHandler(Filters.text, get_orario)],
-
             ORARIO: [MessageHandler(Filters.regex('^(Adesso|Scegli orario)$'), get_next_metro)],            
-
-            SCEGLIORARIO: [MessageHandler(Filters.text, scegli_orario)]
-                      
+            SCEGLIORARIO: [MessageHandler(Filters.text, scegli_orario)]        
         },
-
         fallbacks=[CommandHandler('cancella', cancel)]
     )
 
     client_report = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex('📢 Report'), report)],
-
         states={
             SENDMESSAGE: [MessageHandler(Filters.text, send_report)],                      
         },
-
         fallbacks=[CommandHandler('cancella', cancel)]
     )
 
     admin_report = ConversationHandler(
         entry_points=[MessageHandler(Filters.regex('✏️ Scrivi file report'), report_message)],
-
         states={
             WRITEMESSAGE: [MessageHandler(Filters.text, write_report)],                      
         },
-
         fallbacks=[CommandHandler('cancella', abort_report)]
     )
     
@@ -69,36 +60,22 @@ def main():
 
     dp.add_error_handler(error)
 
-    def stop_and_restart():
-        updater.stop()
-        os.execl(sys.executable, sys.executable, *sys.argv)
-
-    def restart(bot, update):
-        chat_id = update.message.chat_id
-        text = update.message.text
-        if str(chat_id) in config_get["autorizzati"] :
-            if text == "/restartbot " + str(chat_id):
-                bot.send_message(chat_id= chat_id, text= 'Riavviando il bot...')
-                Thread(target=stop_and_restart).start()
-            else:
-                bot.send_message(chat_id= chat_id, text= 'Il comando corretto è /restartbot <chat_id_autorizzato>, usa /chatid per conoscere il tuo chatid')
-
     def shutdown():
         updater.stop()
         updater.is_idle = False
 
-    def shutDownBot(bot, update):
+    def shut_down_bot(update, context):
         chat_id = update.message.chat_id
         text = update.message.text
         if str(chat_id) in config_get["autorizzati"] :
             if text == "/shutdownbot " + str(chat_id):
-                bot.send_message(chat_id= chat_id, text= 'Spengo il bot... arrivederci!')
+                context.bot.sendMessage(chat_id= chat_id, text= 'Spengo il bot... arrivederci!')
                 Thread(target=shutdown).start()
             else:
-                bot.send_message(chat_id= chat_id, text= 'Il comando corretto è /shutdownbot <chat_id_autorizzato>, usa /chatid per conoscere il tuo chatid')
+                context.bot.sendMessage(chat_id= chat_id, text= 'Il comando corretto è /shutdownbot <chat_id_autorizzato>, usa /chatid per conoscere il tuo chatid')
 
-    dp.add_handler(CommandHandler('restartbot',restart))
-    dp.add_handler(CommandHandler('shutdownbot',shutDownBot))
+    dp.add_handler(CommandHandler('shutdownbot',shut_down_bot))
+
     updater.start_polling()
     updater.idle()
 

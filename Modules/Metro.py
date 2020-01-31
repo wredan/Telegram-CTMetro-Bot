@@ -16,16 +16,23 @@ def get_stazione(update, context: CallbackContext):
     reply_keyboard = []
     for el in metroTime["STAZIONI"]:
         reply_keyboard.append([el])
-    update.message.reply_text('Scegli una stazione (sono ordinate da NESIMA a STESICORO).\n\n Digita /cancella per terminare la richiesta', 
+    update.message.reply_text(' 🚇 Scegli una stazione (sono ordinate da NESIMA a STESICORO).\n\n Digita /cancella per terminare la richiesta', 
                                 reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True))
     return STAZIONE
 
 def get_orario(update, context: CallbackContext):
-    context.user_data["Stazione"] = update.message.text
-    update.message.reply_text(
-        'Bene, a che ora ti interessa sapere la prossima metro?\n\n Digita /cancella per terminare la richiesta',
-        reply_markup=ReplyKeyboardMarkup(get_scelta_orario_keyboard(), resize_keyboard=True))
-    return ORARIO
+    text = update.message.text
+    if '/' in text:
+        update.message.reply_text('Stazione non accettata, non inserire comandi, attieniti alle stazioni indicate sotto nei pulsanti.')
+        return STAZIONE
+    elif text not in metroTime["STAZIONI"]:
+        update.message.reply_text('Stazione non accettata, attieniti alle stazioni indicate sotto nei pulsanti.')
+        return STAZIONE
+    else:
+        context.user_data["Stazione"] = update.message.text
+        update.message.reply_text('🕓 Bene, a che ora ti interessa sapere la prossima metro?\n\n Digita /cancella per terminare la richiesta',
+            reply_markup=ReplyKeyboardMarkup(get_scelta_orario_keyboard(), resize_keyboard=True))
+        return ORARIO
 
 def get_next_metro(update, context: CallbackContext):
     tx = update.message.text.strip()    
@@ -115,13 +122,13 @@ def get_time(stazione, start, end, time):
         toff+= delta
     tx=""
     if(stazione.upper() != end.upper()):
-        tx = str(stazione.upper())+" in direzione "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
+        tx = "🚈 " + str(stazione.upper())+" ➡️ "+ str(end.upper()) +": " + ':'.join(str(toff).split(':')[:2])
     return tx
 
 def get_metro_time(stazione, time):
     timeNes = get_time(stazione, "NESIMA", "STESICORO", time)
     timeSte = get_time(stazione, "STESICORO", "NESIMA", time)
-    finalTime = timeNes+"\n"+timeSte
+    finalTime = timeNes+"\n\n"+timeSte
     return finalTime
 
 def offset_test(end, stazione, t1):

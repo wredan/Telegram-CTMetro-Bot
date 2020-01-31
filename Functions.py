@@ -33,15 +33,12 @@ def get_info(update, context):
 def get_stazioni(update, context):
     mex = ""
     for el in metroTime["STAZIONI"]:
-        mex+="🚉 "+ el + "\n\n"
+        mex+="Ⓜ️ "+ el + "\n\n"
     update.message.reply_text(mex)        
-
 
 def cancel(update, context):
     user = update.message.from_user
-    logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text('Arrivederci, a presto!',
-                              reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+    update.message.reply_text('Arrivederci, a presto!', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
     return ConversationHandler.END
 
 def start_bot(update, context):    
@@ -49,9 +46,10 @@ def start_bot(update, context):
     update.message.reply_text(st, reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
 
 def new_metro(update, context):
-    st = "Ciao! Abbiamo fatto un nuovo aggiornamento che cambia un po' l'esperienza d'uso del bot, speriamo ti piaccia! Per ulteriori chiarimenti, segui i pulsanti in tastiera. Buona esperienza 😄"
+    st = "Ciao! Abbiamo fatto un nuovo aggiornamento che cambia un po' l'esperienza d'uso del bot, speriamo ti piaccia! Per ulteriori chiarimenti, segui i pulsanti in tastiera. Buona esperienza 😄\n\nAggiornamento a cura di @warcreed"
     update.message.reply_text(st, reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
-
+    return ConversationHandler.END
+    
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
