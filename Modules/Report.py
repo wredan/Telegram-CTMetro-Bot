@@ -15,7 +15,7 @@ WRITEMESSAGE = range(1)
 def report_message(update, context):
     chat_id = update.message.chat_id
     if str(chat_id) in config_get["autorizzati"]:
-        tx = "Inserisci il testo da scrivere.\nNOTA BENE: verrà sovrascritto tutto il file, quindi copia il contenuto, modificalo e incollalo qui. /cancella per annullare l'azione"
+        tx = "Inserisci il testo da scrivere.\nNOTA BENE: verrà sovrascritto tutto il file, quindi copia il contenuto, modificalo e incollalo qui. /annulla per annullare l'azione"
         update.message.reply_text(tx, reply_markup=ReplyKeyboardRemove())
         return  WRITEMESSAGE
     return ConversationHandler.END
@@ -49,7 +49,7 @@ def report(update, context):
     else:
         tx = '''Grazie per aver scelto di segnalarci i problemi che hai con il bot. Ti ricordiamo che inviando il messaggio acconsenti implicitamente ad essere ricontattato da uno degli sviluppatori per ulteriori chiarimenti. 
 Non ti disturberemo se non sarà strettamente necessario!
-Detto ciò inserisci qui il tuo messaggio o digita /cancella per annullare:'''
+Detto ciò inserisci qui il tuo messaggio o digita /annulla per annullare:'''
         update.message.reply_text(tx, reply_markup=ReplyKeyboardRemove())
         return SENDMESSAGE
     
@@ -77,5 +77,5 @@ def clear_reports(update, context):
 def abort_report(update, context):
     chat_id = update.message.chat_id
     if str(chat_id) in config_get["autorizzati"]:
-        update.message.reply_text("Azione annullata", reply_markup=ReplyKeyboardMarkup(get_admin_report_keyboard(), resize_keyboard=True))
+        update.message.reply_text("👍🏻 Azione annullata", reply_markup=ReplyKeyboardMarkup(get_admin_report_keyboard(), resize_keyboard=True))
     return ConversationHandler.END

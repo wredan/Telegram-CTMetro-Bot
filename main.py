@@ -14,12 +14,12 @@ def main():
     dp.add_handler(CommandHandler('metro',new_metro))
     dp.add_handler(CommandHandler('start',start_bot))
     dp.add_handler(CommandHandler('chatid',get_chat_id))
+    dp.add_handler(CommandHandler('dona',donate))
 
     dp.add_handler(MessageHandler(Filters.regex('Aiuto'), get_help))
     dp.add_handler(MessageHandler(Filters.regex('ℹ️ Info'), get_info))
     dp.add_handler(MessageHandler(Filters.regex('🚉 Stazioni'), get_stazioni))
     dp.add_handler(MessageHandler(Filters.regex('👨‍💻 Chi siamo'), get_author))
-    dp.add_handler(MessageHandler(Filters.regex('💙 Dona'), donate))
     dp.add_handler(MessageHandler(Filters.regex('📜 Lista comandi'),get_lista_comandi))
 
     dp.add_handler(MessageHandler(Filters.regex('📜 Leggi report'), read_reports))
@@ -35,7 +35,7 @@ def main():
             ORARIO: [MessageHandler(Filters.regex('^(Adesso|Scegli orario)$'), get_next_metro)],            
             SCEGLIORARIO: [MessageHandler(Filters.text, scegli_orario)]        
         },
-        fallbacks=[CommandHandler('cancella', cancel)]
+        fallbacks=[CommandHandler('annulla', cancel)]
     )
 
     client_report = ConversationHandler(
@@ -43,7 +43,7 @@ def main():
         states={
             SENDMESSAGE: [MessageHandler(Filters.text, send_report)],                      
         },
-        fallbacks=[CommandHandler('cancella', cancel)]
+        fallbacks=[CommandHandler('annulla', cancel)]
     )
 
     admin_report = ConversationHandler(
@@ -51,7 +51,7 @@ def main():
         states={
             WRITEMESSAGE: [MessageHandler(Filters.text, write_report)],                      
         },
-        fallbacks=[CommandHandler('cancella', abort_report)]
+        fallbacks=[CommandHandler('annulla', abort_report)]
     )
     
     dp.add_handler(metro)

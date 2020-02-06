@@ -1,7 +1,7 @@
 def get_default_keyboard():
-    return [['🚇 Metro', '🚉 Stazioni', 'ℹ️ Info'],
-                      ['👨‍💻 Chi siamo', '💙 Dona', '📢 Report'],
-                      ['📜 Lista comandi']]
+    return [['🚇 Metro', '🚉 Stazioni'],
+            ['ℹ️ Info', '👨‍💻 Chi siamo'],
+            ['📢 Report', '📜 Lista comandi']]
 
 def get_scelta_orario_keyboard():
     return [['Scegli orario', 'Adesso']]
