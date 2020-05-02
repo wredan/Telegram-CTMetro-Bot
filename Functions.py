@@ -36,12 +36,7 @@ def get_stazioni(update, context):
         mex+="Ⓜ️ <strong>"+ el + "</strong>"
         if el != "STESICORO":
             mex += "\n  |\n"
-    update.message.reply_text(mex, parse_mode= ParseMode.HTML)        
-
-def cancel(update, context):
-    user = update.message.from_user
-    update.message.reply_text('👍🏻 Azione annullata correttamente!', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
-    return ConversationHandler.END
+    update.message.reply_text(mex, parse_mode= ParseMode.HTML)             
 
 def start_bot(update, context):    
     st = phrases["start"]

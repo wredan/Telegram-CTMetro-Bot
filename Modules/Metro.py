@@ -13,20 +13,33 @@ tz = pytz.timezone('Europe/Rome')
 
 STAZIONE, ORARIO, SCEGLIORARIO = range(3)
 
+ACTIVE = 1
+
+def cancel(update, context):
+    global ACTIVE   
+    if ACTIVE:
+        user = update.message.from_user
+        update.message.reply_text('👍🏻 Azione annullata correttamente!', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+    else:
+        user = update.message.from_user
+        update.message.reply_text('Servizio attualmente non attivo', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+    return ConversationHandler.END
+
 def get_stazione(update, context: CallbackContext):
-    reply_keyboard = []
-    for el in metroTime["STAZIONI"]:
-        reply_keyboard.append([el])
-    update.message.reply_text(' 🚇 Scegli una stazione (sono ordinate da NESIMA a STESICORO).\n\n Digita /annulla per terminare la richiesta', 
-                                reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True))
-    return STAZIONE
+    global ACTIVE
+    if ACTIVE:
+        reply_keyboard = []
+        for el in metroTime["STAZIONI"]:
+            reply_keyboard.append([el])
+        update.message.reply_text(' 🚇 Scegli una stazione (sono ordinate da NESIMA a STESICORO).', 
+                                    reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True))
+        return STAZIONE
+    else:
+        cancel(update, context)
 
 def get_orario(update, context: CallbackContext):
     text = update.message.text
-    if '/' in text:
-        update.message.reply_text('Stazione non accettata, non inserire comandi, attieniti alle stazioni indicate sotto nei pulsanti.')
-        return STAZIONE
-    elif text not in metroTime["STAZIONI"]:
+    if text not in metroTime["STAZIONI"]:
         update.message.reply_text('Stazione non accettata, attieniti alle stazioni indicate sotto nei pulsanti.')
         return STAZIONE
     else:
@@ -146,3 +159,17 @@ def get_easter_egg(message):
     if message == "2033" or message == "2034" or message == "2035" or message.lower() == "exodus":
        return phrases["easterEggPhrases"][randint(0, len(phrases["easterEggPhrases"]) - 1)] + " 👀"
     return ""
+
+def enable_service(update, context):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        global ACTIVE
+        ACTIVE = 1
+        update.message.reply_text('Servizio attivato', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
+
+def disable_service(update, context):
+    chat_id = update.message.chat_id
+    if str(chat_id) in config_get["autorizzati"]:
+        global ACTIVE
+        ACTIVE = 0
+        update.message.reply_text('Servizio disattivato', reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))

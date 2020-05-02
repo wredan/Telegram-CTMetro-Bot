@@ -15,6 +15,8 @@ def main():
     dp.add_handler(CommandHandler('start',start_bot))
     dp.add_handler(CommandHandler('chatid',get_chat_id))
     dp.add_handler(CommandHandler('dona',donate))
+    dp.add_handler(CommandHandler('enable',enable_service))
+    dp.add_handler(CommandHandler('disable',disable_service))
 
     dp.add_handler(MessageHandler(Filters.regex('Aiuto'), get_help))
     dp.add_handler(MessageHandler(Filters.regex('ℹ️ Info'), get_info))
