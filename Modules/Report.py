@@ -42,7 +42,7 @@ def read_reports(update, context):
         update.message.reply_text(tx)
 
 def report(update, context):
-    chat_id = update.message.chat_id
+    chat_id = update.message.chat.id
     if str(chat_id) in config_get["autorizzati"]:
         update.message.reply_text('Ecco la tastiera admin, usala bene mi raccomando 👀', reply_markup=ReplyKeyboardMarkup(get_admin_report_keyboard(), resize_keyboard=True))
         return ConversationHandler.END
@@ -62,8 +62,8 @@ def send_report(update, context):
         f.close()        
         update.message.reply_text(phrases["succReport"], reply_markup=ReplyKeyboardMarkup(get_default_keyboard(), resize_keyboard=True))
         for el in config_get["autorizzati"]:
-            context.bot.sendMessage(chat_id= el, text= tx)  
-        return ConversationHandler.END     
+            context.bot.sendMessage(chat_id= el, text= tx)          
+        return ConversationHandler.END
     else:
         update.message.reply_text(phrases["errReport"])
         return SENDMESSAGE           
